@@ -1,4 +1,4 @@
-const API = "http://127.0.0.1:8000";
+const API = "https://medipredict-ai-2dgd.onrender.com";
 
 function getSession(){try{return JSON.parse(sessionStorage.getItem("pms_user")||"null")}catch{return null}}
 function setSession(u){sessionStorage.setItem("pms_user",JSON.stringify(u))}
