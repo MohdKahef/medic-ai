@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Dashboard — MediPredict AI</title>
+  <link rel="stylesheet" href="static/css/styles.css"/>
+  <style>
+    .hero-glow{position:absolute;top:68px;left:0;right:0;height:320px;pointer-events:none;z-index:0;
+      background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(232,255,71,0.05),transparent 70%)}
+    .section-label{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--text3);margin-bottom:14px}
+    .accuracy-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}
+    @media(max-width:600px){.accuracy-grid{grid-template-columns:1fr}}
+    .acc-item{background:var(--surface2);border-radius:12px;padding:16px 18px;display:flex;align-items:center;gap:12px}
+    .acc-val{font-family:var(--font-d);font-size:1.3rem;font-weight:800;letter-spacing:-0.03em}
+    .acc-lbl{font-size:0.75rem;color:var(--text2);margin-top:2px}
+    .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+    .dist-bar{margin-bottom:14px}
+    .dist-row{display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:6px}
+    .dist-track{height:5px;border-radius:100px;background:var(--surface2);overflow:hidden}
+  </style>
+</head>
+<body>
+<div class="hero-glow"></div>
+<div class="page">
+  <nav class="navbar">
+    <div class="nav-logo"><div class="nav-dot"></div>MediPredict AI</div>
+    <div class="nav-links">
+      <a href="dashboard.html" class="active">Dashboard</a>
+      <a href="heart.html">Heart</a>
+      <a href="liver.html">Liver</a>
+      <a href="diabetes.html">Diabetes</a>
+    </div>
+    <div class="nav-right">
+      <span class="nav-username" id="navUser">Doctor</span>
+      <div class="nav-avatar" id="navAvatar">D</div>
+      <button class="btn-nav" onclick="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- HERO -->
+    <div class="db-hero reveal">
+      <div class="db-eyebrow">AI Health Intelligence Platform</div>
+      <h1 class="display">Welcome back,<br/><span class="hl" id="userName">Doctor</span></h1>
+      <p style="margin-top:16px;color:var(--text2);max-width:520px;font-size:1rem">
+        AI-powered disease risk assessment across cardiovascular, hepatic, and metabolic conditions — all in one place.
+      </p>
+      <div style="margin-top:28px;display:flex;gap:12px;flex-wrap:wrap">
+        <a href="heart.html" class="btn btn-primary">Start Assessment →</a>
+        <a href="#modules" class="btn btn-ghost">View Modules</a>
+      </div>
+    </div>
+
+    <!-- MARQUEE -->
+    <div class="marquee-wrap reveal">
+      <div class="marquee-track">
+        <div class="marquee-item"><span class="mi-dot">✦</span> Heart Disease Prediction</div>
+        <div class="marquee-item"><span class="mi-dot">✦</span> Liver Function Analysis</div>
+        <div class="marquee-item"><span class="mi-dot">✦</span> Diabetes Risk Screening</div>
+        <div class="marquee-item"><span class="mi-dot">✦</span> AI Medical Reports</div>
+        <div class="marquee-item"><span class="mi-dot">✦</span> Personalized Medicine</div>
+        <div class="marquee-item"><span class="mi-dot">✦</span> RandomForest Models</div>
+        <div class="marquee-item"><span class="mi-dot">✦</span> Real-time Predictions</div>
+        <!-- duplicate for seamless loop -->
+        <div class="marquee-item"><span class="mi-dot">✦</span> Heart Disease Prediction</div>
+        <div class="marquee-item"><span class="mi-dot">✦</span> Liver Function Analysis</div>
+        <div class="marquee-item"><span class="mi-dot">✦</span> Diabetes Risk Screening</div>
+        <div class="marquee-item"><span class="mi-dot">✦</span> AI Medical Reports</div>
+        <div class="marquee-item"><span class="mi-dot">✦</span> Personalized Medicine</div>
+        <div class="marquee-item"><span class="mi-dot">✦</span> RandomForest Models</div>
+        <div class="marquee-item"><span class="mi-dot">✦</span> Real-time Predictions</div>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-grid">
+      <div class="stat-card reveal rd1">
+        <div class="si">❤️</div>
+        <div><div class="sv text-heart" id="c1">0</div><div class="sl">Heart Assessments</div></div>
+      </div>
+      <div class="stat-card reveal rd2">
+        <div class="si">🫀</div>
+        <div><div class="sv text-liver" id="c2">0</div><div class="sl">Liver Assessments</div></div>
+      </div>
+      <div class="stat-card reveal rd3">
+        <div class="si">🩸</div>
+        <div><div class="sv text-teal" id="c3">0</div><div class="sl">Diabetes Assessments</div></div>
+      </div>
+    </div>
+
+    <div class="section-line"></div>
+
+    <!-- AI STATUS CARD -->
+    <div class="card reveal" style="margin-bottom:32px;background:linear-gradient(135deg,rgba(232,255,71,0.04),rgba(0,212,170,0.04))">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px">
+        <div>
+          <div class="chip chip-y" style="margin-bottom:12px">✦ System Status</div>
+          <h2 class="display-sm">3 AI Models — Operational</h2>
+          <p style="color:var(--text2);font-size:0.875rem;margin-top:6px">RandomForest classifiers loaded. All prediction endpoints ready.</p>
+        </div>
+        <div class="accuracy-grid" style="min-width:320px">
+          <div class="acc-item">
+            <div><div class="acc-val text-heart">96.5%</div><div class="acc-lbl">Heart Accuracy</div></div>
+          </div>
+          <div class="acc-item">
+            <div><div class="acc-val text-liver">100%</div><div class="acc-lbl">Liver Accuracy</div></div>
+          </div>
+          <div class="acc-item">
+            <div><div class="acc-val text-teal">96.0%</div><div class="acc-lbl">Diabetes Accuracy</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DISEASE MODULES -->
+    <div id="modules">
+      <div class="section-head reveal">
+        <div>
+          <div class="section-label">Prediction Modules</div>
+          <h2 class="display-md">Choose a <span class="hl">Disease Module</span></h2>
+        </div>
+      </div>
+      <div class="disease-grid">
+        <a href="heart.html" class="dcard heart reveal rd1">
+          <div class="dcard-icon">❤️</div>
+          <div class="chip chip-r" style="margin-bottom:14px">13 Features</div>
+          <h3>Heart Disease</h3>
+          <p>Assess cardiovascular risk using ECG data, cholesterol, blood pressure, and exercise test results.</p>
+          <div class="dcard-footer">
+            <span style="font-size:0.78rem;color:var(--text3)">RandomForest · 96.5% acc</span>
+            <div class="dcard-arrow">↗</div>
+          </div>
+        </a>
+        <a href="liver.html" class="dcard liver reveal rd2">
+          <div class="dcard-icon">🫀</div>
+          <div class="chip chip-o" style="margin-bottom:14px">10 Features</div>
+          <h3>Liver Disease</h3>
+          <p>Detect hepatic abnormalities from bilirubin levels, liver enzymes, and protein biomarkers.</p>
+          <div class="dcard-footer">
+            <span style="font-size:0.78rem;color:var(--text3)">RandomForest · 100% acc</span>
+            <div class="dcard-arrow">↗</div>
+          </div>
+        </a>
+        <a href="diabetes.html" class="dcard diabetes reveal rd3">
+          <div class="dcard-icon">🩸</div>
+          <div class="chip chip-t" style="margin-bottom:14px">8 Features</div>
+          <h3>Diabetes</h3>
+          <p>Predict Type 2 Diabetes risk using glucose, BMI, insulin levels, and hereditary pedigree function.</p>
+          <div class="dcard-footer">
+            <span style="font-size:0.78rem;color:var(--text3)">RandomForest · 96.0% acc</span>
+            <div class="dcard-arrow">↗</div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="section-line"></div>
+
+    <!-- ACTIVITY + DISTRIBUTION -->
+    <div class="two-col">
+      <div class="card reveal rd1">
+        <div class="section-label">Recent Predictions</div>
+        <div class="feed-item"><div class="fd" style="background:var(--heart)"></div><div class="fi"><div class="ft">Heart Disease Scan — Patient #4821</div><div class="ftm">2 minutes ago</div></div><span class="risk-pill risk-high" style="font-size:0.7rem">High</span></div>
+        <div class="feed-item"><div class="fd" style="background:var(--diabetes)"></div><div class="fi"><div class="ft">Diabetes Check — Patient #3304</div><div class="ftm">18 minutes ago</div></div><span class="risk-pill risk-low" style="font-size:0.7rem">Low</span></div>
+        <div class="feed-item"><div class="fd" style="background:var(--liver)"></div><div class="fi"><div class="ft">Liver Function — Patient #2211</div><div class="ftm">1 hour ago</div></div><span class="risk-pill risk-moderate" style="font-size:0.7rem">Moderate</span></div>
+        <div class="feed-item"><div class="fd" style="background:var(--heart)"></div><div class="fi"><div class="ft">Heart Disease Scan — Patient #1990</div><div class="ftm">3 hours ago</div></div><span class="risk-pill risk-low" style="font-size:0.7rem">Low</span></div>
+        <div class="feed-item"><div class="fd" style="background:var(--diabetes)"></div><div class="fi"><div class="ft">Diabetes Check — Patient #1102</div><div class="ftm">5 hours ago</div></div><span class="risk-pill risk-high" style="font-size:0.7rem">High</span></div>
+      </div>
+
+      <div class="card reveal rd2">
+        <div class="section-label">Risk Distribution Today</div>
+        <div class="dist-bar">
+          <div class="dist-row"><span>High Risk</span><span style="color:var(--heart);font-family:var(--font-d);font-weight:700">28%</span></div>
+          <div class="dist-track"><div style="height:100%;border-radius:100px;background:linear-gradient(90deg,#c62828,var(--heart));width:28%;transition:width 1s ease"></div></div>
+        </div>
+        <div class="dist-bar">
+          <div class="dist-row"><span>Moderate Risk</span><span style="color:var(--liver);font-family:var(--font-d);font-weight:700">35%</span></div>
+          <div class="dist-track"><div style="height:100%;border-radius:100px;background:linear-gradient(90deg,#e65100,var(--liver));width:35%;transition:width 1s ease"></div></div>
+        </div>
+        <div class="dist-bar">
+          <div class="dist-row"><span>Low Risk</span><span style="color:var(--diabetes);font-family:var(--font-d);font-weight:700">37%</span></div>
+          <div class="dist-track"><div style="height:100%;border-radius:100px;background:linear-gradient(90deg,#00897b,var(--diabetes));width:37%;transition:width 1s ease"></div></div>
+        </div>
+
+        <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border)">
+          <div class="section-label">Quick Actions</div>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
+            <a href="heart.html" class="btn btn-ghost btn-full" style="border-radius:12px;justify-content:flex-start;gap:10px">❤️ New Heart Assessment</a>
+            <a href="liver.html" class="btn btn-ghost btn-full" style="border-radius:12px;justify-content:flex-start;gap:10px">🫀 New Liver Assessment</a>
+            <a href="diabetes.html" class="btn btn-ghost btn-full" style="border-radius:12px;justify-content:flex-start;gap:10px">🩸 New Diabetes Assessment</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="height:64px"></div>
+  </div>
+</div>
+
+<script src="static/js/main.js"></script>
+<script>
+requireAuth();
+const u=getSession();
+if(u)document.getElementById("userName").textContent=u.name;
+document.addEventListener("DOMContentLoaded",()=>{
+  animateCounter(document.getElementById("c1"),1247);
+  animateCounter(document.getElementById("c2"),843);
+  animateCounter(document.getElementById("c3"),2106);
+});
+</script>
+</body>
+</html>

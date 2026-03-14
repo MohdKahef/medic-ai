@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Heart Disease Prediction — MediPredict AI</title>
+  <link rel="stylesheet" href="static/css/styles.css"/>
+  <style>
+    .hero-glow{position:absolute;top:68px;left:0;right:0;height:280px;pointer-events:none;z-index:0;
+      background:radial-gradient(ellipse 60% 50% at 20% 0%,rgba(255,77,109,0.07),transparent 65%)}
+    .ref-card{background:var(--surface2);border-radius:14px;padding:14px 18px;margin-bottom:16px;font-size:0.82rem;color:var(--text2)}
+    .ref-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:0.82rem}
+    .ref-row:last-child{border-bottom:none}
+    .ref-row span:first-child{color:var(--text3)}
+    .ref-row span:last-child{font-weight:600;color:var(--text)}
+  </style>
+</head>
+<body>
+<div class="hero-glow"></div>
+<div class="page">
+  <nav class="navbar">
+    <div class="nav-logo"><div class="nav-dot"></div>MediPredict AI</div>
+    <div class="nav-links">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="heart.html" class="active">Heart</a>
+      <a href="liver.html">Liver</a>
+      <a href="diabetes.html">Diabetes</a>
+    </div>
+    <div class="nav-right">
+      <span class="nav-username" id="navUser">Doctor</span>
+      <div class="nav-avatar" id="navAvatar">D</div>
+      <button class="btn-nav" onclick="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="predict-hero reveal">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+        <div style="width:56px;height:56px;border-radius:16px;background:rgba(255,77,109,0.12);display:grid;place-items:center;font-size:1.7rem;flex-shrink:0">❤️</div>
+        <div>
+          <div class="chip chip-r" style="margin-bottom:8px">Cardiovascular · 13 Features</div>
+          <h1 class="display-md"><span class="hl-heart">Heart Disease</span> Prediction</h1>
+        </div>
+      </div>
+      <p style="color:var(--text2);max-width:540px">Enter patient's clinical data to assess cardiovascular risk using our RandomForest AI model trained on 1,000 patient records.</p>
+    </div>
+
+    <div class="predict-layout">
+      <!-- FORM -->
+      <div class="form-panel reveal rd1">
+        <div class="steps-bar">
+          <div class="step-btn active" id="sb0">01 · Demographics</div>
+          <div class="step-btn" id="sb1">02 · Vitals & Labs</div>
+          <div class="step-btn" id="sb2">03 · Cardiac Data</div>
+        </div>
+
+        <!-- Step 1 -->
+        <div class="form-step active">
+          <p style="font-size:0.82rem;color:var(--text3);margin-bottom:20px">Basic patient demographics and symptoms</p>
+          <div class="form-grid2">
+            <div class="form-group">
+              <label class="form-label">Age *</label>
+              <input type="number" id="age" class="form-control" placeholder="e.g. 52" min="1" max="120" required/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Sex *</label>
+              <select id="sex" class="form-control" required>
+                <option value="">Select...</option>
+                <option value="1">Male</option>
+                <option value="0">Female</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Chest Pain Type *</label>
+              <select id="cp" class="form-control" required>
+                <option value="">Select...</option>
+                <option value="0">Typical Angina</option>
+                <option value="1">Atypical Angina</option>
+                <option value="2">Non-Anginal Pain</option>
+                <option value="3">Asymptomatic</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Fasting Blood Sugar >120 mg/dL</label>
+              <select id="fbs" class="form-control">
+                <option value="0">No (≤120)</option>
+                <option value="1">Yes (>120)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="form-step">
+          <p style="font-size:0.82rem;color:var(--text3);margin-bottom:20px">Blood pressure, cholesterol, and cardiac measurements</p>
+          <div class="form-grid2">
+            <div class="form-group">
+              <label class="form-label">Resting BP (mmHg) *</label>
+              <input type="number" id="trestbps" class="form-control" placeholder="e.g. 130" required/>
+              <div class="form-hint">Normal: 90–120 mmHg</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Cholesterol (mg/dL) *</label>
+              <input type="number" id="chol" class="form-control" placeholder="e.g. 240" required/>
+              <div class="form-hint">Normal: &lt;200 mg/dL</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Max Heart Rate *</label>
+              <input type="number" id="thalach" class="form-control" placeholder="e.g. 150" required/>
+              <div class="form-hint">Max achieved (bpm)</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Resting ECG</label>
+              <select id="restecg" class="form-control">
+                <option value="0">Normal</option>
+                <option value="1">ST-T Wave Abnormality</option>
+                <option value="2">LV Hypertrophy</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="form-step">
+          <p style="font-size:0.82rem;color:var(--text3);margin-bottom:20px">Exercise test results and vascular findings</p>
+          <div class="form-grid2">
+            <div class="form-group">
+              <label class="form-label">Exercise Angina</label>
+              <select id="exang" class="form-control">
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">ST Depression (Oldpeak)</label>
+              <input type="number" id="oldpeak" class="form-control" placeholder="e.g. 1.4" step="0.1" value="0"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">ST Slope</label>
+              <select id="slope" class="form-control">
+                <option value="0">Upsloping</option>
+                <option value="1">Flat</option>
+                <option value="2">Downsloping</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Major Vessels (0–3)</label>
+              <input type="number" id="ca" class="form-control" placeholder="0" min="0" max="3" value="0"/>
+            </div>
+            <div class="form-group" style="grid-column:span 2">
+              <label class="form-label">Thalassemia Type</label>
+              <select id="thal" class="form-control">
+                <option value="0">Normal</option>
+                <option value="1">Fixed Defect</option>
+                <option value="2">Reversable Defect</option>
+                <option value="3">Unknown</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:10px">
+          <button class="btn btn-ghost" id="btnPrev" style="display:none" onclick="prevStep()">← Back</button>
+          <button class="btn btn-primary" id="btnNext" onclick="nextStep()" style="flex:1">Next →</button>
+          <button class="btn btn-primary" id="btnSubmit" style="display:none;flex:1" onclick="submitHeart()">
+            <span id="stxt">🔍 Analyze</span>
+            <span id="ssp" style="display:none"><div class="spinner"></div></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL -->
+      <div>
+        <div class="info-panel reveal rd2" style="margin-bottom:18px">
+          <div class="chip chip-r" style="margin-bottom:12px">About This Model</div>
+          <p><strong>RandomForest Classifier</strong> trained on 1,000 cardiovascular patient records. Analyzes 13 features including ECG findings, cholesterol levels, blood pressure, and exercise stress test data.</p>
+          <p style="margin-top:10px">Model accuracy: <strong style="color:var(--accent)">96.5%</strong> on held-out validation data.</p>
+        </div>
+
+        <div class="card reveal rd3" style="margin-bottom:18px">
+          <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:12px">Normal Reference Ranges</div>
+          <div class="ref-card" style="margin-bottom:0;padding:0;background:transparent">
+            <div class="ref-row"><span>Resting BP</span><span>90–120 mmHg</span></div>
+            <div class="ref-row"><span>Cholesterol</span><span>&lt;200 mg/dL</span></div>
+            <div class="ref-row"><span>Max Heart Rate</span><span>Age-dependent</span></div>
+            <div class="ref-row"><span>Fasting Glucose</span><span>&lt;100 mg/dL</span></div>
+          </div>
+        </div>
+
+        <div id="resultCard" class="result-card"></div>
+      </div>
+    </div>
+
+    <div style="height:64px"></div>
+  </div>
+</div>
+
+<script src="static/js/main.js"></script>
+<script>
+requireAuth();
+document.addEventListener("DOMContentLoaded",()=>{
+  const dots=[document.getElementById("sb0"),document.getElementById("sb1"),document.getElementById("sb2")];
+  currentStep=0; totalSteps=3;
+  function refreshBtns(){
+    dots.forEach((d,i)=>{d.classList.toggle("active",i===currentStep);d.classList.toggle("done",i<currentStep)});
+    document.getElementById("btnPrev").style.display=currentStep===0?"none":"inline-flex";
+    document.getElementById("btnNext").style.display=currentStep<2?"inline-flex":"none";
+    document.getElementById("btnSubmit").style.display=currentStep===2?"inline-flex":"none";
+  }
+  window.nextStep=function(){if(validateStep(currentStep)){currentStep++;showStep(currentStep);refreshBtns()}};
+  window.prevStep=function(){if(currentStep>0){currentStep--;showStep(currentStep);refreshBtns()}};
+  refreshBtns();
+});
+
+async function submitHeart(){
+  if(!validateStep(currentStep))return;
+  const t=document.getElementById("stxt"),s=document.getElementById("ssp");
+  t.style.display="none";s.style.display="inline-block";
+  try{
+    const result=await predictHeart({
+      age:+document.getElementById("age").value,
+      sex:+document.getElementById("sex").value,
+      cp:+document.getElementById("cp").value,
+      trestbps:+document.getElementById("trestbps").value,
+      chol:+document.getElementById("chol").value,
+      fbs:+document.getElementById("fbs").value,
+      restecg:+document.getElementById("restecg").value,
+      thalach:+document.getElementById("thalach").value,
+      exang:+document.getElementById("exang").value,
+      oldpeak:+(document.getElementById("oldpeak").value||0),
+      slope:+document.getElementById("slope").value,
+      ca:+(document.getElementById("ca").value||0),
+      thal:+document.getElementById("thal").value,
+    });
+    renderResult(result,"var(--heart)");
+    showToast("Heart disease prediction complete!","success");
+  }catch(e){showToast("API error: "+e.message,"error")}
+  finally{t.style.display="inline";s.style.display="none"}
+}
+</script>
+</body>
+</html>

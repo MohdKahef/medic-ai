@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Sign In — MediPredict AI</title>
+  <link rel="stylesheet" href="static/css/styles.css"/>
+  <style>
+    /* floating particles */
+    .particles{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+    .p{position:absolute;border-radius:50%;opacity:0;animation:pfloat var(--d,10s) ease-in-out var(--dl,0s) infinite}
+    @keyframes pfloat{0%,100%{opacity:0;transform:translate(0,0)}15%,85%{opacity:var(--op,.5)}50%{transform:translate(var(--tx,20px),var(--ty,-80px));opacity:var(--op,.7)}}
+    .hero-bg{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(232,255,71,0.04),transparent 60%)}
+  </style>
+</head>
+<body>
+<div class="hero-bg"></div>
+<div class="particles" id="particles"></div>
+
+<div class="page" style="padding-top:0">
+  <div class="login-page">
+    <div class="lg-glow"></div>
+    <div class="login-box" style="animation:stepIn 0.6s ease both">
+
+      <div class="login-top">
+        <span class="login-icon">🏥</span>
+        <h1>MediPredict <span class="hl">AI</span></h1>
+        <p>Personalized Medicine Prediction System</p>
+      </div>
+
+      <div class="role-toggle">
+        <button class="role-btn active" id="roleDoc" onclick="setRole('doctor',this)">👨‍⚕️ Doctor</button>
+        <button class="role-btn" id="rolePat" onclick="setRole('patient',this)">🧑‍💼 Patient</button>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" id="email" class="form-control" placeholder="doctor@ai.com"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" id="password" class="form-control" placeholder="••••••••"/>
+        <div class="err-msg" id="errMsg">Invalid credentials. Use the demo accounts below.</div>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;margin-bottom:22px">
+        <a href="#" style="font-size:0.82rem;color:var(--text3)">Forgot password?</a>
+      </div>
+
+      <button class="btn btn-primary btn-full btn-lg" onclick="handleLogin()" id="loginBtn">
+        <span id="btnTxt">Sign In →</span>
+        <span id="btnSp" style="display:none"><div class="spinner"></div></span>
+      </button>
+
+      <div class="demo-note" style="margin-top:20px">
+        <strong>Demo accounts:</strong><br/>
+        Doctor: doctor@ai.com / <strong>doctor123</strong><br/>
+        Patient: patient@ai.com / <strong>patient123</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="static/js/main.js"></script>
+<script>
+// Create particles
+const pc=document.getElementById("particles");
+const colors=["232,255,71","0,212,170","255,77,109","255,183,3"];
+for(let i=0;i<35;i++){
+  const el=document.createElement("div");el.className="p";
+  const c=colors[i%colors.length];const sz=1+Math.random()*3;
+  el.style.cssText=`width:${sz}px;height:${sz}px;background:rgba(${c},0.6);left:${Math.random()*100}%;top:${40+Math.random()*60}%;
+    --d:${7+Math.random()*10}s;--dl:${Math.random()*8}s;
+    --tx:${(Math.random()-0.5)*60}px;--ty:-${60+Math.random()*80}px;--op:${0.3+Math.random()*0.5}`;
+  pc.appendChild(el);
+}
+
+let role="doctor";
+function setRole(r,el){
+  role=r;
+  document.querySelectorAll(".role-btn").forEach(b=>b.classList.remove("active"));
+  el.classList.add("active");
+}
+
+const CREDS={
+  "doctor@ai.com":  {pass:"doctor123", role:"doctor",  name:"Dr. Smith"},
+  "patient@ai.com": {pass:"patient123",role:"patient", name:"John Doe"},
+};
+
+async function handleLogin(){
+  const email=document.getElementById("email").value.trim();
+  const pass=document.getElementById("password").value;
+  const err=document.getElementById("errMsg");
+  const txt=document.getElementById("btnTxt");
+  const sp=document.getElementById("btnSp");
+  err.classList.remove("show");
+  txt.style.display="none"; sp.style.display="inline-block";
+  await new Promise(r=>setTimeout(r,900));
+  const u=CREDS[email];
+  if(u&&u.pass===pass){setSession({email,role:u.role,name:u.name});window.location.href="dashboard.html";}
+  else{txt.style.display="inline";sp.style.display="none";err.classList.add("show");document.getElementById("password").value="";}
+}
+
+document.getElementById("password").addEventListener("keydown",e=>{if(e.key==="Enter")handleLogin()});
+if(getSession())window.location.href="dashboard.html";
+</script>
+</body>
+</html>

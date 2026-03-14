@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Liver Disease Prediction — MediPredict AI</title>
+  <link rel="stylesheet" href="static/css/styles.css"/>
+  <style>
+    .hero-glow{position:absolute;top:68px;left:0;right:0;height:280px;pointer-events:none;z-index:0;
+      background:radial-gradient(ellipse 60% 50% at 20% 0%,rgba(255,183,3,0.06),transparent 65%)}
+  </style>
+</head>
+<body>
+<div class="hero-glow"></div>
+<div class="page">
+  <nav class="navbar">
+    <div class="nav-logo"><div class="nav-dot"></div>MediPredict AI</div>
+    <div class="nav-links">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="heart.html">Heart</a>
+      <a href="liver.html" class="active">Liver</a>
+      <a href="diabetes.html">Diabetes</a>
+    </div>
+    <div class="nav-right">
+      <span class="nav-username" id="navUser">Doctor</span>
+      <div class="nav-avatar" id="navAvatar">D</div>
+      <button class="btn-nav" onclick="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="predict-hero reveal">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+        <div style="width:56px;height:56px;border-radius:16px;background:rgba(255,183,3,0.12);display:grid;place-items:center;font-size:1.7rem;flex-shrink:0">🫀</div>
+        <div>
+          <div class="chip chip-o" style="margin-bottom:8px">Hepatology · 10 Features</div>
+          <h1 class="display-md"><span class="hl-liver">Liver Disease</span> Prediction</h1>
+        </div>
+      </div>
+      <p style="color:var(--text2);max-width:540px">Analyze bilirubin levels, liver enzymes, and protein biomarkers to detect hepatic abnormalities using AI.</p>
+    </div>
+
+    <div class="predict-layout">
+      <div class="form-panel reveal rd1">
+        <div class="steps-bar">
+          <div class="step-btn active" id="sb0">01 · Patient Info</div>
+          <div class="step-btn" id="sb1">02 · Enzymes & Proteins</div>
+        </div>
+
+        <!-- Step 1 -->
+        <div class="form-step active">
+          <p style="font-size:0.82rem;color:var(--text3);margin-bottom:20px">Patient demographics and bilirubin levels</p>
+          <div class="form-grid2">
+            <div class="form-group">
+              <label class="form-label">Age *</label>
+              <input type="number" id="age" class="form-control" placeholder="e.g. 45" required/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Gender</label>
+              <select id="gender" class="form-control">
+                <option value="0">Female</option>
+                <option value="1">Male</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Total Bilirubin (mg/dL) *</label>
+              <input type="number" id="total_bilirubin" class="form-control" placeholder="e.g. 1.2" step="0.1" required/>
+              <div class="form-hint">Normal: 0.2–1.2 mg/dL</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Direct Bilirubin (mg/dL) *</label>
+              <input type="number" id="direct_bilirubin" class="form-control" placeholder="e.g. 0.4" step="0.1" required/>
+              <div class="form-hint">Normal: 0–0.4 mg/dL</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="form-step">
+          <p style="font-size:0.82rem;color:var(--text3);margin-bottom:20px">Liver enzyme activity and protein markers</p>
+          <div class="form-grid2">
+            <div class="form-group">
+              <label class="form-label">Alkaline Phosphotase (IU/L) *</label>
+              <input type="number" id="alkaline_phosphotase" class="form-control" placeholder="e.g. 187" required/>
+              <div class="form-hint">Normal: 44–147 IU/L</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">ALT — Alamine (IU/L) *</label>
+              <input type="number" id="alamine_aminotransferase" class="form-control" placeholder="e.g. 56" required/>
+              <div class="form-hint">Normal: 7–56 IU/L</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">AST — Aspartate (IU/L) *</label>
+              <input type="number" id="aspartate_aminotransferase" class="form-control" placeholder="e.g. 40" required/>
+              <div class="form-hint">Normal: 10–40 IU/L</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Total Proteins (g/dL) *</label>
+              <input type="number" id="total_protiens" class="form-control" placeholder="e.g. 6.8" step="0.1" required/>
+              <div class="form-hint">Normal: 6–8.3 g/dL</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Albumin (g/dL) *</label>
+              <input type="number" id="albumin" class="form-control" placeholder="e.g. 3.8" step="0.1" required/>
+              <div class="form-hint">Normal: 3.4–5.4 g/dL</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Albumin/Globulin Ratio *</label>
+              <input type="number" id="albumin_and_globulin_ratio" class="form-control" placeholder="e.g. 1.1" step="0.01" required/>
+              <div class="form-hint">Normal: 1.0–2.5</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:10px">
+          <button class="btn btn-ghost" id="btnPrev" style="display:none" onclick="prevStep()">← Back</button>
+          <button class="btn btn-primary" id="btnNext" onclick="nextStep()" style="flex:1;background:linear-gradient(135deg,#e65100,var(--liver));color:#080808">Next →</button>
+          <button class="btn btn-primary" id="btnSubmit" style="display:none;flex:1;background:linear-gradient(135deg,#e65100,var(--liver));color:#080808" onclick="submitLiver()">
+            <span id="stxt">🔍 Analyze</span>
+            <span id="ssp" style="display:none"><div class="spinner"></div></span>
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <div class="info-panel reveal rd2" style="margin-bottom:18px">
+          <div class="chip chip-o" style="margin-bottom:12px">Indian Liver Patient Dataset</div>
+          <p>Analyzes <strong>10 hepatic biomarkers</strong>: bilirubin levels, liver enzymes (ALT, AST, ALP), total proteins, albumin, and albumin/globulin ratios.</p>
+          <p style="margin-top:10px">Model accuracy: <strong style="color:var(--accent)">100%</strong> on validation data.</p>
+        </div>
+
+        <div class="card reveal rd3" style="margin-bottom:18px">
+          <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:12px">Key Liver Biomarkers</div>
+          <div style="display:flex;flex-direction:column;gap:0">
+            <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:0.82rem"><span style="color:var(--text3)">Total Bilirubin</span><span style="color:var(--text);font-weight:600">&lt;1.2 mg/dL</span></div>
+            <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:0.82rem"><span style="color:var(--text3)">ALT (SGPT)</span><span style="color:var(--text);font-weight:600">7–56 IU/L</span></div>
+            <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:0.82rem"><span style="color:var(--text3)">AST (SGOT)</span><span style="color:var(--text);font-weight:600">10–40 IU/L</span></div>
+            <div style="display:flex;justify-content:space-between;padding:7px 0;font-size:0.82rem"><span style="color:var(--text3)">Albumin</span><span style="color:var(--text);font-weight:600">3.4–5.4 g/dL</span></div>
+          </div>
+        </div>
+
+        <div id="resultCard" class="result-card"></div>
+      </div>
+    </div>
+    <div style="height:64px"></div>
+  </div>
+</div>
+
+<script src="static/js/main.js"></script>
+<script>
+requireAuth();
+document.addEventListener("DOMContentLoaded",()=>{
+  const dots=[document.getElementById("sb0"),document.getElementById("sb1")];
+  currentStep=0;totalSteps=2;
+  function refreshBtns(){
+    dots.forEach((d,i)=>{d.classList.toggle("active",i===currentStep);d.classList.toggle("done",i<currentStep)});
+    document.getElementById("btnPrev").style.display=currentStep===0?"none":"inline-flex";
+    document.getElementById("btnNext").style.display=currentStep<1?"inline-flex":"none";
+    document.getElementById("btnSubmit").style.display=currentStep===1?"inline-flex":"none";
+  }
+  window.nextStep=function(){if(validateStep(currentStep)){currentStep++;showStep(currentStep);refreshBtns()}};
+  window.prevStep=function(){if(currentStep>0){currentStep--;showStep(currentStep);refreshBtns()}};
+  refreshBtns();
+});
+
+async function submitLiver(){
+  if(!validateStep(currentStep))return;
+  const t=document.getElementById("stxt"),s=document.getElementById("ssp");
+  t.style.display="none";s.style.display="inline-block";
+  try{
+    const result=await predictLiver({
+      age:+document.getElementById("age").value,
+      gender:+document.getElementById("gender").value,
+      total_bilirubin:+document.getElementById("total_bilirubin").value,
+      direct_bilirubin:+document.getElementById("direct_bilirubin").value,
+      alkaline_phosphotase:+document.getElementById("alkaline_phosphotase").value,
+      alamine_aminotransferase:+document.getElementById("alamine_aminotransferase").value,
+      aspartate_aminotransferase:+document.getElementById("aspartate_aminotransferase").value,
+      total_protiens:+document.getElementById("total_protiens").value,
+      albumin:+document.getElementById("albumin").value,
+      albumin_and_globulin_ratio:+document.getElementById("albumin_and_globulin_ratio").value,
+    });
+    renderResult(result,"var(--liver)");
+    showToast("Liver disease prediction complete!","success");
+  }catch(e){showToast("API error: "+e.message,"error")}
+  finally{t.style.display="inline";s.style.display="none"}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Diabetes Prediction — MediPredict AI</title>
+  <link rel="stylesheet" href="static/css/styles.css"/>
+  <style>
+    .hero-glow{position:absolute;top:68px;left:0;right:0;height:280px;pointer-events:none;z-index:0;
+      background:radial-gradient(ellipse 60% 50% at 80% 0%,rgba(0,212,170,0.06),transparent 65%)}
+    .glucose-ref{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+    .gr-item{display:flex;align-items:center;gap:10px;font-size:0.82rem;color:var(--text2)}
+    .gr-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+  </style>
+</head>
+<body>
+<div class="hero-glow"></div>
+<div class="page">
+  <nav class="navbar">
+    <div class="nav-logo"><div class="nav-dot"></div>MediPredict AI</div>
+    <div class="nav-links">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="heart.html">Heart</a>
+      <a href="liver.html">Liver</a>
+      <a href="diabetes.html" class="active">Diabetes</a>
+    </div>
+    <div class="nav-right">
+      <span class="nav-username" id="navUser">Doctor</span>
+      <div class="nav-avatar" id="navAvatar">D</div>
+      <button class="btn-nav" onclick="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="predict-hero reveal">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+        <div style="width:56px;height:56px;border-radius:16px;background:rgba(0,212,170,0.12);display:grid;place-items:center;font-size:1.7rem;flex-shrink:0">🩸</div>
+        <div>
+          <div class="chip chip-t" style="margin-bottom:8px">Endocrinology · 8 Features</div>
+          <h1 class="display-md"><span class="hl-teal">Diabetes</span> Risk Prediction</h1>
+        </div>
+      </div>
+      <p style="color:var(--text2);max-width:540px">Predict Type 2 Diabetes risk using plasma glucose, insulin levels, BMI, and hereditary pedigree function.</p>
+    </div>
+
+    <div class="predict-layout">
+      <div class="form-panel reveal rd1">
+        <div class="steps-bar">
+          <div class="step-btn active" id="sb0">01 · Profile</div>
+          <div class="step-btn" id="sb1">02 · Blood Tests</div>
+          <div class="step-btn" id="sb2">03 · Review</div>
+        </div>
+
+        <!-- Step 1 -->
+        <div class="form-step active">
+          <p style="font-size:0.82rem;color:var(--text3);margin-bottom:20px">Patient age, BMI, and reproductive history</p>
+          <div class="form-grid2">
+            <div class="form-group">
+              <label class="form-label">Age *</label>
+              <input type="number" id="age" class="form-control" placeholder="e.g. 35" required/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Number of Pregnancies</label>
+              <input type="number" id="pregnancies" class="form-control" placeholder="0" min="0" max="20" value="0"/>
+              <div class="form-hint">Enter 0 for males</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">BMI (kg/m²) *</label>
+              <input type="number" id="bmi" class="form-control" placeholder="e.g. 27.5" step="0.1" required/>
+              <div class="form-hint">Normal: 18.5–24.9</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Diabetes Pedigree Function *</label>
+              <input type="number" id="diabetes_pedigree_function" class="form-control" placeholder="e.g. 0.627" step="0.001" required/>
+              <div class="form-hint">Hereditary factor (0.078–2.42)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="form-step">
+          <p style="font-size:0.82rem;color:var(--text3);margin-bottom:20px">Fasting glucose, insulin, and blood pressure</p>
+          <div class="form-grid2">
+            <div class="form-group">
+              <label class="form-label">Plasma Glucose (mg/dL) *</label>
+              <input type="number" id="glucose" class="form-control" placeholder="e.g. 148" required/>
+              <div class="form-hint">Fasting; Normal: 70–99 mg/dL</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Blood Pressure (mmHg) *</label>
+              <input type="number" id="blood_pressure" class="form-control" placeholder="e.g. 72" required/>
+              <div class="form-hint">Diastolic reading</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">2-Hr Insulin (µU/mL)</label>
+              <input type="number" id="insulin" class="form-control" placeholder="e.g. 168" value="0"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Skin Thickness (mm)</label>
+              <input type="number" id="skin_thickness" class="form-control" placeholder="e.g. 35" value="0"/>
+              <div class="form-hint">Triceps skinfold</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Review -->
+        <div class="form-step">
+          <p style="font-size:0.82rem;color:var(--text3);margin-bottom:16px">Review your entries before analysis</p>
+          <div id="reviewGrid" style="background:var(--surface2);border-radius:14px;padding:18px;margin-bottom:16px"></div>
+          <div style="padding:13px 16px;background:rgba(0,212,170,0.06);border:1px solid rgba(0,212,170,0.15);border-radius:12px;font-size:0.82rem;color:var(--text2)">
+            🧠 The AI will analyze all 8 metabolic features and generate a personalized diabetes risk report.
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:10px">
+          <button class="btn btn-ghost" id="btnPrev" style="display:none" onclick="prevStep()">← Back</button>
+          <button class="btn btn-teal" id="btnNext" onclick="nextStep()" style="flex:1">Next →</button>
+          <button class="btn btn-teal" id="btnSubmit" style="display:none;flex:1" onclick="submitDiabetes()">
+            <span id="stxt">🔍 Analyze</span>
+            <span id="ssp" style="display:none"><div class="spinner" style="border-color:rgba(8,8,8,0.25);border-top-color:#080808"></div></span>
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <div class="info-panel reveal rd2" style="margin-bottom:18px">
+          <div class="chip chip-t" style="margin-bottom:12px">Pima Indians Dataset Style</div>
+          <p>Trained on <strong>8 metabolic features</strong>: glucose, blood pressure, skin thickness, insulin, BMI, diabetes pedigree function, age, and pregnancies.</p>
+          <p style="margin-top:10px">The <strong>Pedigree Function</strong> quantifies hereditary risk from family history. Model accuracy: <strong style="color:var(--accent)">96.0%</strong>.</p>
+        </div>
+
+        <div class="card reveal rd3" style="margin-bottom:18px">
+          <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:12px">Glucose Reference</div>
+          <div class="glucose-ref">
+            <div class="gr-item"><div class="gr-dot" style="background:var(--diabetes)"></div>Normal: &lt; 100 mg/dL (fasting)</div>
+            <div class="gr-item"><div class="gr-dot" style="background:var(--liver)"></div>Pre-diabetic: 100–125 mg/dL</div>
+            <div class="gr-item"><div class="gr-dot" style="background:var(--heart)"></div>Diabetic: ≥ 126 mg/dL</div>
+          </div>
+        </div>
+
+        <div id="resultCard" class="result-card"></div>
+      </div>
+    </div>
+    <div style="height:64px"></div>
+  </div>
+</div>
+
+<script src="static/js/main.js"></script>
+<script>
+requireAuth();
+document.addEventListener("DOMContentLoaded",()=>{
+  const dots=[document.getElementById("sb0"),document.getElementById("sb1"),document.getElementById("sb2")];
+  currentStep=0;totalSteps=3;
+  function refreshBtns(){
+    dots.forEach((d,i)=>{d.classList.toggle("active",i===currentStep);d.classList.toggle("done",i<currentStep)});
+    document.getElementById("btnPrev").style.display=currentStep===0?"none":"inline-flex";
+    document.getElementById("btnNext").style.display=currentStep<2?"inline-flex":"none";
+    document.getElementById("btnSubmit").style.display=currentStep===2?"inline-flex":"none";
+    if(currentStep===2){
+      const fields={"Age":document.getElementById("age").value,"Pregnancies":document.getElementById("pregnancies").value,
+        "Glucose (mg/dL)":document.getElementById("glucose").value,"Blood Pressure":document.getElementById("blood_pressure").value,
+        "BMI":document.getElementById("bmi").value,"Insulin":document.getElementById("insulin").value,
+        "Pedigree Function":document.getElementById("diabetes_pedigree_function").value,"Skin Thickness":document.getElementById("skin_thickness").value};
+      document.getElementById("reviewGrid").innerHTML=Object.entries(fields).map(([k,v])=>
+        `<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:0.82rem">
+          <span style="color:var(--text3)">${k}</span><span style="font-weight:600">${v||"—"}</span></div>`
+      ).join("");
+    }
+  }
+  window.nextStep=function(){if(validateStep(currentStep)){currentStep++;showStep(currentStep);refreshBtns()}};
+  window.prevStep=function(){if(currentStep>0){currentStep--;showStep(currentStep);refreshBtns()}};
+  refreshBtns();
+});
+
+async function submitDiabetes(){
+  const t=document.getElementById("stxt"),s=document.getElementById("ssp");
+  t.style.display="none";s.style.display="inline-block";
+  try{
+    const result=await predictDiabetes({
+      pregnancies:+(document.getElementById("pregnancies").value||0),
+      glucose:+document.getElementById("glucose").value,
+      blood_pressure:+document.getElementById("blood_pressure").value,
+      skin_thickness:+(document.getElementById("skin_thickness").value||0),
+      insulin:+(document.getElementById("insulin").value||0),
+      bmi:+document.getElementById("bmi").value,
+      diabetes_pedigree_function:+document.getElementById("diabetes_pedigree_function").value,
+      age:+document.getElementById("age").value,
+    });
+    renderResult(result,"var(--diabetes)");
+    showToast("Diabetes prediction complete!","success");
+  }catch(e){showToast("API error: "+e.message,"error")}
+  finally{t.style.display="inline";s.style.display="none"}
+}
+</script>
+</body>
+</html>
